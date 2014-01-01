@@ -28,7 +28,7 @@ Modules
 Timer
 ---------
 
-The timer module provides a real-time counter with 100µs resolution. Applications may use it from within an event loop to execute code on a periodic basis. Applications may poll to determine if their timer has fired and perform an associated action. For example, 
+The timer module provides a real-time counter with 100µs resolution using Timer 3. Applications may use it from within an event loop to execute code on a periodic basis. Applications may poll to determine if their timer has fired and perform an associated action. For example, 
 
     int main(void)
     {
@@ -69,4 +69,10 @@ SPI
 
 SPI is a module for using the SPI interface in master mode to transmit data. It allows code to send a complete buffer and poll for the completion
 
+    int main(void) {
+      setup_spi(); //Initialize the SPI module
 
+      write_spi("HELLO WORLD", 12); //Writes 12 bytes out the SPI interface, returns immediately
+      
+      while(spi_busy()); //Spin until the entire buffer has been written out
+    }
