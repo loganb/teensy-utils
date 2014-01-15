@@ -67,12 +67,19 @@ API TBD
 SPI
 ------------ 
 
-SPI is a module for using the SPI interface in master mode to transmit data. It allows code to send a complete buffer and poll for the completion
+SPI is a module for using the SPI interface in master mode to transmit data. It allows code to send a complete buffer and poll for the completion. The code handles the assertion of the SS pin for the peripheral you wish to communicate with, lowering it at the start of transfer and raising it at the end. Configuration of the SS-pin and (in the future) SPI parameters is done via a special struct in program memory. 
+
+    static const spi_peripheral_cfg spi_cfg PROGMEM = {
+	    .port_register = &PORTB,
+			.pin_mask      = 0b00000001 //SS is B0
+		};
 
     int main(void) {
+      uint8_t buf[] = "HELLO WORLD";
       setup_spi(); //Initialize the SPI module
 
-      write_spi("HELLO WORLD", 12); //Writes 12 bytes out the SPI interface, returns immediately
+      //Writes 12 bytes out the SPI interface, buf is overwritten with the data read
+      async_rw_spi(&spi_cfg, buf, 12); 
       
-      while(spi_busy()); //Spin until the entire buffer has been written out
+      while(has_spi(&spi_cfg)); //Spin until this transfer is done
     }
